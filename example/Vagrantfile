@@ -1,0 +1,38 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  
+  config.vm.define "master", primary: true do |master|
+	master.vm.box = "debian/contrib-jessie64"
+	master.vm.synced_folder "../roles", "/vagrant/roles"
+	master.vm.provider "virtualbox" do |vb|
+  	  vb.name = "ansible-master" 
+    end
+	master.vm.network "private_network", ip: "192.168.33.10"
+	
+	master.vm.provision "shell", inline: <<-SCRIPT
+      apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
+      apt-get update
+	  apt-get install -y ansible sshpass
+	  cat /vagrant/master_ansible_hosts > /etc/ansible/hosts
+	  cat /vagrant/master_ssh_config > /home/vagrant/.ssh/config
+    SCRIPT
+  end
+  
+  config.vm.define "node", primary: true do |node|
+	node.vm.box = "debian/contrib-jessie64"
+	node.vm.provider "virtualbox" do |vb|
+  	  vb.name = "ansible-node" 
+    end
+	node.vm.network "private_network", ip: "192.168.33.11"
+	
+	node.vm.provision "shell", inline: <<-SCRIPT
+      cat /vagrant/node_sshd_config > /etc/ssh/sshd_config
+	  service sshd restart
+    SCRIPT
+  end
+
+end

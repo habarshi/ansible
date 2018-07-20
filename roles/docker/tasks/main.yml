@@ -10,12 +10,12 @@
     name: "{{ item }}"
     state: "present"
     install_recommends: False
-  with_items:
+  loop:
     - "apt-transport-https"
     - "ca-certificates"
     - "software-properties-common"
     - "cron"
-
+    
 - name: Get upstream APT GPG key
   apt_key:
     id: "{{ docker_apt_key }}"

@@ -6,7 +6,7 @@
 - name: Pull habarshi image
   command: "docker pull {{ habarshi_image }}"
   
-- name: Ensures {{ habarshi_path }}/conf dir exists
+- name: Ensures {{ habarshi_path }} dir exists
   file:
     path: "{{ habarshi_path }}"
     state: "directory"
@@ -18,10 +18,33 @@
     owner: "root"
     group: "root"
     mode: "0644"
+    
+- name: Ensures {{ habarshi_path }}/docker-entrypoint-initdb.d dir exists
+  file:
+    path: "{{ habarshi_path }}/docker-entrypoint-initdb.d"
+    state: "directory"
+    
+- name: Initiaize database 
+  template:
+    src: "opt/habarshi/docker-entrypoint-initdb.d/init_script.j2"
+    dest: "{{ habarshi_path }}/docker-entrypoint-initdb.d/init_script.sql"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+    
+- name: Ensures {{ habarshi_path }}/db/data dir exists
+  file:
+    path: "{{ habarshi_path }}/db/data"
+    state: "directory"
+    
+- name: Generate postgres pg_hba.conf
+  template:
+    src: "opt/habarshi/db/data/pg_hba.j2"
+    dest: "{{ habarshi_path }}/db/data/pg_hba.conf"
+    owner: "root"
+    group: "root"
+    mode: "0600"
 
-- name: Up postgres service
-  docker_service:
-    project_src: "{{ habarshi_path }}"
-    project_name: "habarshi-db"
-    state: "present"
+- name: Up docker-compose services
+  command: "docker-compose -f {{ habarshi_path }}/docker-compose.yml up -d"
     

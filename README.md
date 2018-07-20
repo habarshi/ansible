@@ -9,7 +9,5 @@
 
 ## Role variables
 
-- docker_edition: "ce"   ```# Community Edition ('ce') or Enterprise Edition ('ee')```
-- docker_channel: "stable" ```# install Docker through "stable" or "edge" channel```
 - docker_version: "18.03.1" ```# version of Docker do you want to install```
 - docker_compose_version: "1.21.1" ```# install a specific version of Docker Compose```

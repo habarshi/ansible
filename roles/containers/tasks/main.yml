@@ -1,0 +1,27 @@
+---
+
+- name: Pull postgres image
+  command: "docker pull {{ postgres_image }}"
+
+- name: Pull habarshi image
+  command: "docker pull {{ habarshi_image }}"
+  
+- name: Ensures {{ habarshi_path }}/conf dir exists
+  file:
+    path: "{{ habarshi_path }}"
+    state: "directory"
+  
+- name: Generate docker-compose file
+  template:
+    src: "opt/habarshi/docker-compose.j2"
+    dest: "{{ habarshi_path }}/docker-compose.yml"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+
+- name: Up postgres service
+  docker_service:
+    project_src: "{{ habarshi_path }}"
+    project_name: "habarshi-db"
+    state: "present"
+    

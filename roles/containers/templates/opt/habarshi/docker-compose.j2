@@ -1,0 +1,54 @@
+version: '2'
+services:
+  habarshi:
+    image: "{{ habarshi_image }}"
+    container_name: "habarshi"
+    command: habarshictl start
+    environment:
+      - SSL_OFF=1
+      - LOGGER=SENTRY
+      - DOMAIN={{ habarshi_domain }}
+      - PG_USER={{habarshi_db_user  }}
+      - PG_USER_PASS={{ habarshi_db_pass }}
+      - PG_DBNAME={{ habarshi_db_name }}
+      - PG_ADDR=db
+      - PROSODY_ROUTED_PORT=5222
+      - LOG_TRAFFIC=1
+    volumes:
+      - ./habarshi/uploads:/uploads
+      - ./habarshi/backups:/var/www/html/backups
+      - ./habarshi/certs:/certs
+    ports:
+      - "5222:5222"
+    depends_on:
+      - "db"
+    networks:
+      habarshi:
+        ipv4_address: {{ habarshi_ip }}
+
+  db:
+    image: "postgres:9.6"
+    container_name: "habarshi-db"
+    command: postgres -c logging_collector=on -c log_destination=stderr -c log_directory=/logs -c max_connections=1000
+    expose:
+      - "5432"
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - PGDATA=/var/lib/postgresql/data
+    volumes:
+      - ./db/data:/var/lib/postgresql/data
+      - ./db/logs:/logs
+      - ./db/tmp:/tmp
+    networks:
+      habarshi:
+        ipv4_address: {{ habarshi_db_ip }}
+
+networks:
+  habarshi:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: "{{ habarshi_subnet }}"
+          gateway: "{{ habarshi_gateway }}"

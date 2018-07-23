@@ -18,7 +18,7 @@ services:
     volumes:
       - ./habarshi/uploads:/uploads
       - ./habarshi/backups:/var/www/html/backups
-      - ./habarshi/certs:/certs
+      - {{ habarshi_keys_path }}:/certs
     ports:
       - "5222:5222"
     depends_on:

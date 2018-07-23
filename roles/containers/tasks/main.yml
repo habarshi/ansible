@@ -24,13 +24,17 @@
     path: "{{ habarshi_path }}/docker-entrypoint-initdb.d"
     state: "directory"
     
-- name: Initiaize database 
+- name: Initiaize database step 1 
   template:
     src: "opt/habarshi/docker-entrypoint-initdb.d/init_script.j2"
     dest: "{{ habarshi_path }}/docker-entrypoint-initdb.d/init_script.sql"
     owner: "root"
     group: "root"
-    mode: "0644"
+    mode: "0600"
+    
+    
+- name: Initiaize database step 2
+  command: "docker-compose -f {{ habarshi_path }}/docker-compose.yml up -d db"
     
 - name: Ensures {{ habarshi_path }}/db/data dir exists
   file:
@@ -44,7 +48,17 @@
     owner: "root"
     group: "root"
     mode: "0600"
-
-- name: Up docker-compose services
-  command: "docker-compose -f {{ habarshi_path }}/docker-compose.yml up -d"
     
+    
+- name: Create symlinks to certificates for XMPP server
+  file:
+    src: "{{ item.path }}"
+    dest: "{{ item.dest }}"
+    state: link
+  with_items:
+    - { path: "{{ ssl_certificate }}", dest: "{{ habarshi_keys_path }}/habarshi.crt" }
+    - { path: "{{ ssl_certificate_key }}", dest: "{{ habarshi_keys_path }}/habarshi.key" }
+
+    
+#- name: Up docker-compose services
+#  command: "docker-compose -f {{ habarshi_path }}/docker-compose.yml up -d"

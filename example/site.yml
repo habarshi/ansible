@@ -1,7 +1,10 @@
 - hosts: habarshi
   vars:
     habarshi_path: "/opt/habarshi"
-    habarshi_ssl_path: "{{habarshi_path}}/ssl"
+    habarshi_keys_path: "{{habarshi_path}}/keys"
+    ssl_certificate: "{{ habarshi_keys_path }}/fullchain.pem"
+    ssl_certificate_key: "{{ habarshi_keys_path }}/privkey.pem"
+    ssl_trusted_certificate: "{{ habarshi_keys_path }}/chain.pem"
     habarshi_domain: "habarshi.local"
     habarshi_net_mask: "24"
     habarshi_subnet: "192.168.8.0/{{habarshi_net_mask}}"
@@ -12,5 +15,4 @@
     habarshi_db_pass: "root"
     habarshi_db_name: "habarshi"
   roles:
-    - docker
-    - containers
+    - nginx

@@ -1,0 +1,74 @@
+server {
+  listen 11987;
+  server_name {{ habarshi_domain }};
+  server_tokens off;
+  
+  error_log /var/log/nginx/{{ habarshi_domain }}.error.log warn;
+
+  location /content {
+    alias {{ habarshi_path }}/uploads;
+    autoindex off;
+  }
+
+  client_max_body_size 1024M;
+
+  location / {
+    proxy_pass http://{{ habarshi_ip }}:11987;
+    proxy_buffering off;
+    gzip on;
+    proxy_read_timeout 100s;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header Host $server_name;
+    proxy_set_header Upgrade $http_upgrade;
+    #proxy_set_header Connection $connection_upgrade;
+    tcp_nodelay on;
+  }
+
+}
+
+server {
+  listen 11999 ssl;
+  listen 11988 ssl;
+  listen 443 ssl;  
+
+  server_name {{ habarshi_domain }};
+  server_tokens off;
+
+  error_log /var/log/nginx/{{ habarshi_domain }}.error.log warn;
+  
+  ssl_certificate			{{ ssl_certificate }};
+  ssl_certificate_key		{{ ssl_certificate_key }};
+  ssl_trusted_certificate	{{ ssl_trusted_certificate }};
+  ssl on;
+  ssl_stapling on;
+  ssl_stapling_verify on;
+
+  location /content {
+    alias {{ habarshi_path }}/uploads;
+    autoindex off;
+  }
+
+  client_max_body_size 1024M;
+
+  location / {
+    
+    if ($server_port = 443) {
+      proxy_pass http://{{ habarshi_ip }};
+    }
+    if ($server_port != 443) {
+      proxy_pass http://{{ habarshi_ip }}:$server_port;
+    }
+    
+    proxy_buffering off;
+    gzip on; 
+    proxy_read_timeout 100s;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-NginX-Proxy true;
+    proxy_ssl_session_reuse off;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+
+    tcp_nodelay on;
+  } 
+}

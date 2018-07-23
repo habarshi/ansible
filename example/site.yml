@@ -1,6 +1,7 @@
 - hosts: habarshi
   vars:
     habarshi_path: "/opt/habarshi"
+    habarshi_ssl_path: "{{habarshi_path}}/ssl"
     habarshi_domain: "habarshi.local"
     habarshi_net_mask: "24"
     habarshi_subnet: "192.168.8.0/{{habarshi_net_mask}}"

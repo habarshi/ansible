@@ -7,7 +7,6 @@
     install_recommends: True
   loop:
     - "nginx"
-    - "openssl"
  
  
 - name: Generate nginx conf file

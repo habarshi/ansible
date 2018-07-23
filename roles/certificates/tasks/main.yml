@@ -1,0 +1,32 @@
+---
+
+- name: Check necessary packages are exist
+  apt:
+    name: "{{ item }}"
+    state: "present"
+    install_recommends: True
+  loop:
+    - "openssl"
+    
+    
+- name: Ensure SSL keys directory exists
+  file:
+    path: "{{ habarshi_keys_path }}"
+    state: "directory"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+    
+    
+- name: Ensure SSL certificate exists
+  stat: 
+    path: "{{ ssl_certificate }}"
+  register: file_exists
+  
+  
+- name: Generate self-signed certificates
+  command: "{{item}}"
+  when: not file_exists.stat.exists
+  loop:
+    - "openssl req -subj '/C=/ST=/L=/O=/OU=/CN={{ habarshi_domain }}' -x509 -nodes -days 365 -newkey rsa:2048 -keyout {{ ssl_certificate_key }} -out {{ ssl_certificate }}"
+    - "ln -sf {{ ssl_certificate }} {{ ssl_trusted_certificate }}"

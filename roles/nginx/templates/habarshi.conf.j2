@@ -36,9 +36,8 @@ server {
 
   error_log /var/log/nginx/{{ habarshi_domain }}.error.log warn;
   
-  ssl_certificate			{{ ssl_certificate }};
-  ssl_certificate_key		{{ ssl_certificate_key }};
-  ssl_trusted_certificate	{{ ssl_trusted_certificate }};
+  ssl_certificate			{{ habarshi_keys_path }}/habarshi.crt;
+  ssl_certificate_key		{{ habarshi_keys_path }}/habarshi.key;
   ssl on;
   ssl_stapling on;
   ssl_stapling_verify on;

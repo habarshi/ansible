@@ -39,9 +39,7 @@ server {
   ssl_certificate			{{ habarshi_keys_path }}/habarshi.crt;
   ssl_certificate_key		{{ habarshi_keys_path }}/habarshi.key;
   ssl on;
-  ssl_stapling on;
-  ssl_stapling_verify on;
-
+  
   location /content {
     alias {{ habarshi_path }}/uploads;
     autoindex off;

@@ -1,15 +1,26 @@
 ---
 
-- name: Pull postgres image
-  command: "docker pull {{ postgres_image }}"
+- name: Check to see if pip is already installed
+  command: "pip --version"
+  ignore_errors: true
+  register: pip_is_installed
+  changed_when: false
 
-- name: Pull habarshi image
-  command: "docker pull {{ habarshi_image }}"
+- block:
+    - name: download get-pip.py
+      get_url: url=https://bootstrap.pypa.io/get-pip.py  dest=/tmp
+    - name: install pip
+      command: "python /tmp/get-pip.py"
+    - name: delete get-pip.py
+      file: state=absent path=/tmp/get-pip.py
+  when: pip_is_installed.rc != 0
+  
   
 - name: Ensures {{ habarshi_path }} dir exists
   file:
     path: "{{ habarshi_path }}"
     state: "directory"
+  
   
 - name: Generate docker-compose file
   template:
@@ -19,50 +30,62 @@
     group: "root"
     mode: "0644"
     
-- name: Ensures {{ habarshi_path }}/docker-entrypoint-initdb.d dir exists
-  file:
-    path: "{{ habarshi_path }}/docker-entrypoint-initdb.d"
-    state: "directory"
-    
-- name: Initiaize database step 1 
-  template:
-    src: "opt/habarshi/docker-entrypoint-initdb.d/init_script.j2"
-    dest: "{{ habarshi_path }}/docker-entrypoint-initdb.d/init_script.sql"
-    owner: "root"
-    group: "root"
-    mode: "0600"
-    
-    
-- name: Initiaize database step 2
-  command: "docker-compose -f {{ habarshi_path }}/docker-compose.yml up -d db"
-    
-- name: Ensures {{ habarshi_path }}/db/data dir exists
-  file:
-    path: "{{ habarshi_path }}/db/data"
-    state: "directory"
-    
-- name: Generate postgres pg_hba.conf
-  template:
-    src: "opt/habarshi/db/data/pg_hba.j2"
-    dest: "{{ habarshi_path }}/db/data/pg_hba.conf"
-    owner: "root"
-    group: "root"
-    mode: "0600"
-    
-    
-- name: Create symlinks to certificates for XMPP server
-  file:
-    src: "{{ item.path }}"
-    dest: "{{ item.dest }}"
-    state: link
-  with_items:
-    - { path: "{{ ssl_certificate }}", dest: "{{ habarshi_keys_path }}/habarshi.crt" }
-    - { path: "{{ ssl_certificate_key }}", dest: "{{ habarshi_keys_path }}/habarshi.key" }
 
+- name: Ensure requirement pip packages are installed
+  pip:
+    name: "{{ item }}"
+    state: "present"
+  loop:
+    - "docker"
+    - "docker-compose"
+    - "psycopg2"
 
-- name: Init habarshi database structures
-  command: "docker-compose -f {{ habarshi_path }}/docker-compose.yml run habarshi python app.py init"    
+    
+- name: Up postgres service
+  docker_service:
+    project_src: "{{ habarshi_path }}"  
+    state: "present"
+    services: "db"
+    pull: yes
     
     
-- name: Up docker-compose services
-  command: "docker-compose -f {{ habarshi_path }}/docker-compose.yml up -d"
+- name: Wait 300 seconds for Postgres port available
+  wait_for:
+    host: "{{ habarshi_db_ip }}"
+    port: 5432
+    delay: 10
+    timeout: 60
+    state: "started"
+    
+    
+- name: Ensure database {{ habarshi_db_name }} exists
+  postgresql_db:
+    name: "{{ habarshi_db_name }}"
+    encoding: "UTF-8"
+    login_host: "{{ habarshi_db_ip }}"
+    login_password: "{{ habarshi_db_pass }}"
+    login_user: "{{ habarshi_db_user }}"
+    owner: "{{ habarshi_db_user }}"
+    state: "present"
+  
+  
+- name: Down Habarshi service
+  docker_service:
+    project_src: "{{ habarshi_path }}"  
+    state: "absent"
+    services: "habarshi"
+    
+
+- name: Check habarshi database structures
+  command: "docker-compose -f {{ habarshi_path }}/docker-compose.yml run habarshi python app.py {{ item }}"  
+  loop:
+    - "init"
+    - "db upgrade"    
+    
+    
+- name: Up Habarshi service
+  docker_service:
+    project_src: "{{ habarshi_path }}"  
+    state: "present"
+    services: "habarshi"
+    pull: yes

@@ -61,12 +61,12 @@
     mode: "0644"
   register: docker_register_systemd_service
 
+  
 - name: Reload systemd daemon
   command: "systemctl daemon-reload"
-  notify: ["Restart Docker"]
   when: (docker_register_systemd_service and
          docker_register_systemd_service is changed)
-
+         
 - name: Add specific users to "docker" group
   user:
     name: "{{ item }}"
@@ -97,3 +97,10 @@
     weekday: "{{ item.schedule[4] }}"
   with_items: "{{ docker_cron_tasks }}"
   when: docker_cron_tasks
+  
+- name: Restart docker daemon
+  service:
+    name: "docker"
+    state: "restarted"
+  when: (docker_register_systemd_service and
+         docker_register_systemd_service is changed)

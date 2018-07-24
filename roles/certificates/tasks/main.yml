@@ -20,7 +20,7 @@
     
 - name: Ensure SSL certificate exists
   stat: 
-    path: "{{ ssl_certificate }}"
+    path: "{{ habarshi_keys_path }}/habarshi.crt"
   register: file_exists
   
   
@@ -29,4 +29,3 @@
   when: not file_exists.stat.exists
   loop:
     - "openssl req -subj '/C=/ST=/L=/O=/OU=/CN={{ habarshi_domain }}' -x509 -nodes -days 365 -newkey rsa:2048 -keyout {{ habarshi_keys_path }}/habarshi.key -out {{ habarshi_keys_path }}/habarshi.crt"
-    - "ln -sf {{ ssl_certificate }} {{ ssl_trusted_certificate }}"

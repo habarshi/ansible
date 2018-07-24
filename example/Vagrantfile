@@ -34,6 +34,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       cat /vagrant/node_sshd_config > /etc/ssh/sshd_config
 	  service sshd restart
     SCRIPT
+	
+	node.vm.provider "virtualbox" do |vb|
+      # Customize the amount of memory on the VM:
+      vb.memory = "4096"
+    end
   end
 
 end

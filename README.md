@@ -20,6 +20,11 @@
 - **`habarshi_db_pass`**: `"root"` - Habarshi database user password
 - **`habarshi_db_name`**: `"habarshi"` - Habarshi database name
 
+## Example:
+
+  See **example.yml** playbook
+
+
 ## SSL certificates
 
  Place your SSL certificate and private key file to `habarshi_keys_path` directory:

@@ -20,11 +20,12 @@
 - **`habarshi_db_pass`**: `"root"` - Habarshi database user password
 - **`habarshi_db_name`**: `"habarshi"` - Habarshi database name
 
-## Example:
+## Examples:
 
-  See **example.yml** [https://github.com/habarshi/ansible/blob/master/example.yml](https://github.com/habarshi/ansible/blob/master/example.yml "example.yml") playbook
+  - See **example.yml** [https://github.com/habarshi/ansible/blob/master/example.yml](https://github.com/habarshi/ansible/blob/master/example.yml "example.yml") playbook (Type: `ansible-playbook example.yml`)
+  - OR Navigate to example page [https://github.com/habarshi/ansible/tree/master/example](https://github.com/habarshi/ansible/tree/master/example) and up virtual machine 
 
-  Type: `ansible-playbook example.yml`
+
 
 
 ## SSL certificates

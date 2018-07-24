@@ -24,6 +24,8 @@
 
   See **example.yml** [https://github.com/habarshi/ansible/blob/master/example.yml](https://github.com/habarshi/ansible/blob/master/example.yml "example.yml") playbook
 
+  Type: `ansible-playbook example.yml`
+
 
 ## SSL certificates
 

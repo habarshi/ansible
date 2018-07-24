@@ -22,7 +22,7 @@
 
 ## Example:
 
-  See **example.yml** playbook
+  See **example.yml** [https://github.com/habarshi/ansible/blob/master/example.yml](https://github.com/habarshi/ansible/blob/master/example.yml "example.yml") playbook
 
 
 ## SSL certificates

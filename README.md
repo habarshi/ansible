@@ -1,6 +1,5 @@
 # Ansible scripts for deploying **Habarshi** server
 
-
 ## Supported platforms
 
 - Ubuntu 16.04 LTS (Xenial)
@@ -19,6 +18,10 @@
 - **`habarshi_db_user`**: `"root"` - Habarshi database user
 - **`habarshi_db_pass`**: `"root"` - Habarshi database user password
 - **`habarshi_db_name`**: `"habarshi"` - Habarshi database name
+
+## Go to admin page (in Browser)
+  Default admin: *root*
+  Default admin password: *asisaka* - you should change it to more strong password value
 
 ## Examples:
 

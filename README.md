@@ -19,6 +19,11 @@
 - **`habarshi_db_pass`**: `"root"` - Habarshi database user password
 - **`habarshi_db_name`**: `"habarshi"` - Habarshi database name
 
+## Step-by-step
+1. Register your personal *HABARSHI* subdomain [https://panel.habarshi.com/](https://panel.habarshi.com/)  
+2. Set `habarshi_domain` parameter to actual value, for example, if your domain = `my_domain.habarshi.com`, set `habarshi_domain: "my_domain.habarshi.com"`
+3. Install any client ([https://panel.habarshi.com/home](https://panel.habarshi.com/home)) and login as `<login>@my_domain`
+
 ## Go to admin page (in Browser)
   Default admin: *root*
   Default admin password: *asisaka* - you should change it to more strong password value

@@ -6,7 +6,7 @@ server {
   error_log /var/log/nginx/{{ habarshi_domain }}.error.log warn;
 
   location /content {
-    alias {{ habarshi_path }}/uploads;
+    alias {{ habarshi_path }}/habarshi/uploads;
     autoindex off;
   }
 
@@ -41,7 +41,7 @@ server {
   ssl on;
   
   location /content {
-    alias {{ habarshi_path }}/uploads;
+    alias {{ habarshi_path }}/habarshi/uploads;
     autoindex off;
   }
 

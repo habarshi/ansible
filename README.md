@@ -29,7 +29,7 @@
   Default admin password: *asisaka* - you should change it to more strong password value
 
 ## Examples:
-  - Install on **localhost**: `ansible-pull -e habarshi_domain=<subdomain>.habarshi.com -e habarshi_db_pass=<your db password> -U https://github.com/habarshi/ansible.git localhost.yml`
+  - Install on **localhost**: `sudo ansible-pull -e habarshi_domain=<subdomain>.habarshi.com -e habarshi_db_pass=<your db password> -U https://github.com/habarshi/ansible.git localhost.yml`
 
   - Install on remote host, see **example.yml** [https://github.com/habarshi/ansible/blob/master/example.yml](https://github.com/habarshi/ansible/blob/master/example.yml "example.yml") playbook (Type: `ansible-playbook example.yml`)
   - OR Navigate to example page [https://github.com/habarshi/ansible/tree/master/example](https://github.com/habarshi/ansible/tree/master/example) and up virtual machine 
